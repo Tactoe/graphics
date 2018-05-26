@@ -1,0 +1,4 @@
+*.o
+.DS*
+fractol
+minilibx_macos/libmlx.a
