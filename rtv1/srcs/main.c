@@ -6,7 +6,7 @@
 /*   By: tmilon <tmilon@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/08 15:09:23 by tmilon            #+#    #+#             */
-/*   Updated: 2018/05/25 13:03:38 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/05/27 13:32:59 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static t_all	init_param(t_all param)
 			SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_SetRenderDrawColor(param.mlx->rend, 0x00, 0x00, 0x00, 1);
 	SDL_RenderClear(param.mlx->rend);
-	param.data.ambiantlight = 0.3f;
+	param.data.ambiantlight = 0.1;
 	param.mlx->loop = 1;
 	param.data.fastmode = 1;
 	return (param);

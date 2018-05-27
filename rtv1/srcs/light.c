@@ -6,7 +6,7 @@
 /*   By: tmilon <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/21 10:50:35 by tmilon            #+#    #+#             */
-/*   Updated: 2018/05/25 16:22:35 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/05/27 14:14:34 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,9 @@ static double	get_intensity(t_intersect inter, t_light light, t_data data)
 	double		intensity;
 
 	lightdir = vector_op(light.origin, inter.point, '-');
-	intensity = dotprod(normalize(lightdir), normalize(inter.normal))
-		+ light.intensity;
+	intensity = dotprod(normalize(lightdir), normalize(inter.normal));
 	intensity = intensity <= 0 ? data.ambiantlight :
-		intensity + data.ambiantlight;
+		intensity * light.intensity * 2 + data.ambiantlight;
 	intensity = intensity >= 1 ? 1 : intensity;
 	return (intensity);
 }
@@ -34,13 +33,13 @@ static int		fuse(int start, int finish, int ratio)
 
 	a = int_to_color(start);
 	b = int_to_color(finish);
-	a.r = (a.r + b.r) / ratio;
-	a.g = (a.g + b.g) / ratio;
-	a.b = (a.b + b.b) / ratio;
+	a.r = a.r + b.r / ratio;
+	a.g = a.g + b.g / ratio;
+	a.b = a.b + b.b / ratio;
 	return (color_to_int(a));
 }
 
-double cartoon(double i)
+double			cartoon(double i)
 {
 	if (i > 0 && i < 0.4)
 		i = 0;
@@ -50,10 +49,8 @@ double cartoon(double i)
 		i = 0.8;
 	return (i);
 }
-static int		brillance(int start, t_intersect inter, t_light light)
+static double	brillance_intensity(t_intersect inter, t_light light)
 {
-	t_color		a;
-	t_color		b;
 	t_vector	lightdir;
 	double		intensity;
 	t_vector	reflect;
@@ -66,18 +63,13 @@ static int		brillance(int start, t_intersect inter, t_light light)
 			vector_op(inter.dir_to_cam, new_vector_unicoord(-1), '*'));
 	intensity = intensity < 0 ? 0 : intensity;
 	intensity = pow(intensity, 14 / (get_length(lightdir) + 0.01));
-	intensity *= inter.shape_copy.brillance;
+	intensity *= inter.shape_copy.brillance * light.intensity;
 	intensity = intensity > 1 ? 1 : intensity;
 	//intensity = cartoon(intensity);
-	a = int_to_color(start);
-	b = int_to_color(light.color);
-	a.r += b.r * intensity;
-	a.g += b.g * intensity;
-	a.b += b.b * intensity;
-	return (color_to_int(a));
+	return (intensity);
 }
 
-int				shadows(t_list *shape_lst, t_intersect inter, t_light light)
+static int	shadows(t_list *shape_lst, t_intersect inter, t_light light)
 {
 	t_ray		ray;
 	t_vector	dir;
@@ -92,7 +84,7 @@ int				shadows(t_list *shape_lst, t_intersect inter, t_light light)
 	return (get_nearest_intersection(ray, shape_lst, &inter, dist));
 }
 
-int				set_color(t_list *light_lst, t_list *shape_lst,
+int			set_color(t_list *light_lst, t_list *shape_lst,
 		t_intersect intersection, t_data data)
 {
 	int			ret;
@@ -109,19 +101,11 @@ int				set_color(t_list *light_lst, t_list *shape_lst,
 		intensity = get_intensity(intersection, light, data);
 		//intensity = cartoon(intensity);
 		tmp = interpolate(0, intersection.shape_copy.color, intensity);
-		/*
-		intersection.point = adjust_direction(intersection.point, intersection.shape_copy.inv_rot);
-		intersection.point = vector_op(intersection.point, intersection.shape_copy.origin, '-');
-	if (((int)intersection.point.x % 2 == 0) && ((int)intersection.point.z % 2 == 0)
-	|| (((int)intersection.point.x % 2 != 0) && ((int)intersection.point.z % 2 != 0)))
-				tmp = 0xFFFFFF - tmp;
-		intersection.point = vector_op(intersection.point, intersection.shape_copy.origin, '+');
-		intersection.point = adjust_direction(intersection.point, intersection.shape_copy.rot);
-		*/
 		if (!shadows(shape_lst, intersection, light))
-			tmp = brillance(tmp, intersection, light);
+			tmp = interpolate(tmp, light.color,
+					brillance_intensity(intersection, light));
 		else
-			tmp = interpolate(0, tmp, 0.1);
+			tmp = interpolate(tmp, 0, light.intensity - data.ambiantlight < 0 ? 0 : light.intensity - data.ambiantlight);
 		if (!ret)
 			ret = tmp;
 		else

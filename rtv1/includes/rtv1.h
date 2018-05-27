@@ -6,7 +6,7 @@
 /*   By: tmilon <tmilon@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/18 17:15:16 by tmilon            #+#    #+#             */
-/*   Updated: 2018/05/24 17:11:05 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/05/27 16:42:56 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ typedef struct		s_calcunit
 	double			delta;
 	double			t0;
 	double			t1;
+	t_vector		get_in;
+	t_vector		get_out;
 }					t_calcunit;
 
 /*
@@ -312,6 +314,12 @@ void				rotate_x(t_mat *src, double a);
 void				rotate_y(t_mat *src, double a);
 void				rotate_z(t_mat *src, double a);
 void				rotate_event(t_all *param, t_event touch);
+
+/*
+ ** Texture
+*/
+
+int			texture(int color, t_intersect i, t_shape s);
 
 /*
  **	Camera

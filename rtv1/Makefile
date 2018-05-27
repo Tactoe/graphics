@@ -6,7 +6,7 @@
 #    By: cpieri <cpieri@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/15 11:20:25 by cpieri            #+#    #+#              #
-#    Updated: 2018/05/24 16:19:56 by tmilon           ###   ########.fr        #
+#    Updated: 2018/05/27 14:10:15 by tmilon           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,8 @@ SRC_NAME= 	main.c				\
 			ray_adapter.c		\
 			parse_2.c			\
 			light.c				\
-			exit.c
+			exit.c				\
+			textures.c
 
 OBJ_NAME=	$(SRC_NAME:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: tmilon <tmilon@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/21 16:02:53 by tmilon            #+#    #+#             */
-/*   Updated: 2018/05/25 19:32:42 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/05/27 14:11:36 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
-#include <stdio.h> //vire 
-
-int			checkered(int color, t_intersect i, t_shape s)
-{
-	double u;
-	double v;
-
-	u = i.point.x;
-	v = i.point.z;
-	if (s.type == SPHERE)
-	{
-		u = 0.5 + (atan2(i.normal.z, i.normal.x) / (2 * PI));
-		v = 0.5 - (asin(i.normal.y) / PI);
-	}
-	else if (s.type == CYLINDER)
-	{
-		u = atan2(i.normal.z, i.normal.x) / (2 * PI);
-		v = (atan2(i.point.y / s.height, 1) / (2 * PI)) * s.height;
-	}
-	else if (s.type == CONE)
-	{
-		u = atan2(i.normal.z, i.normal.x) / (2 * PI);
-		v = (atan2(i.normal.y, s.radius) / (2 * PI)) * s.height;
-	}
-	u *= 10;
-	v *= 10;
-	if (((int)u % 2 == 0 && (int)v % 2 == 0)
-	|| (((int)u % 2 != 0 && (int)v % 2 != 0)))
-			color = interpolate(color, (0xFFFFFF - color), 0.3);
-	return (color);
-}
 
 t_intersect	new_intersection(t_shape shape, t_ray ray, double point_dist)
 {
@@ -61,7 +30,7 @@ t_intersect	new_intersection(t_shape shape, t_ray ray, double point_dist)
 	tmp = vector_op(ray.direction, new_vector_unicoord(point_dist), '*');
 	ret.point = vector_op(ret.point, tmp, '+');
 	ret.normal = normalize(normals[shape.type](shape, ret.point));
-	shape.color = checkered(shape.color, ret, shape);
+	shape.color = texture(shape.color, ret, shape);
 	ret.shape_copy = shape;
 	if (shape.type == PLANE)
 	{
@@ -72,7 +41,7 @@ t_intersect	new_intersection(t_shape shape, t_ray ray, double point_dist)
 	ret.point = adjust_direction(ret.point, shape.rot);
 	ret.normal = adjust_direction(ret.normal, shape.rot);
 	ret.normal = normalize(ret.normal);
-	ret.dir_to_cam = ray.direction;
+	ret.dir_to_cam = adjust_direction(ray.direction, shape.rot);
 	return (ret);
 }
 

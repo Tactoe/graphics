@@ -6,13 +6,12 @@
 /*   By: cpieri <cpieri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/12 17:47:21 by cpieri            #+#    #+#             */
-/*   Updated: 2018/05/24 15:26:11 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/05/27 14:12:26 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-#include <stdio.h> //vire 
 void	img_put_pixel(t_mlx *unit, t_point point)
 {
 	t_color c;
