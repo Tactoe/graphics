@@ -6,7 +6,7 @@
 #    By: cpieri <cpieri@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/15 11:20:25 by cpieri            #+#    #+#              #
-#    Updated: 2018/05/27 14:10:15 by tmilon           ###   ########.fr        #
+#    Updated: 2018/06/02 15:20:59 by tmilon           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,10 +15,11 @@ NAME	=	rtv1
 CC		=	gcc
 
 #CFLAGS	=	-Wall -Wextra -Werror
+CFLAGS = -O2
 
-L_SDL	=	$(shell pkg-config --libs sdl2/lib/pkgconfig/sdl2.pc)
+L_SDL	=	$(shell pkg-config --libs sdl2)
 
-I_SDL	= 	$(shell pkg-config --cflags sdl2/lib/pkgconfig/sdl2.pc)
+I_SDL	= 	$(shell pkg-config --cflags sdl2)
 
 SDL_VER	=	2.0.8
 
@@ -50,8 +51,9 @@ SRC_NAME= 	main.c				\
 			ray_adapter.c		\
 			parse_2.c			\
 			light.c				\
-			exit.c				\
-			textures.c
+			textures.c			\
+			limit.c				\
+			exit.c
 
 OBJ_NAME=	$(SRC_NAME:.c=.o)
 
@@ -61,7 +63,7 @@ OBJ		=	$(addprefix $(OBJ_PATH)/,$(OBJ_NAME))
 
 .PHONY:	all clean fclean re
 
-all:		LFT SDL2 $(NAME)
+all:		LFT $(NAME)
 
 $(NAME):	libft $(OBJ)
 			@make -C libft
@@ -84,23 +86,6 @@ fclean:		clean
 			@/bin/rm -f $(NAME)
 
 re:			fclean all
-
-SDL2:
-		@if [ ! -d "./sdl2" ]; then \
-			echo "Compiling sdl2..."; \
-			curl -OL http://www.libsdl.org/release/SDL2-$(SDL_VER).tar.gz && \
-			tar -zxf SDL2-$(SDL_VER).tar.gz && \
-			rm SDL2-$(SDL_VER).tar.gz && \
-			mkdir -p $(PATH_SDL) && \
-			cd SDL2-$(SDL_VER) && \
-			sh configure -q --prefix=$(PATH_SDL) && \
-			make && \
-			make install && \
-			cd .. && \
-			rm -rf SDL2-$(SDL_VER); \
-		else \
-			echo "SDl2-$(SDL_VER) already installed"; \
-		fi
 
 LFT:	
 		@if [ ! -d "./libft/libft.a" ]; then \

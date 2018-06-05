@@ -6,7 +6,7 @@
 /*   By: tmilon <tmilon@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/18 17:15:16 by tmilon            #+#    #+#             */
-/*   Updated: 2018/05/27 16:42:56 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/06/02 10:53:50 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define RTV1_H
 
 # include <SDL.h>
+# include <stdio.h> // AVIRRER
 # include "../libft/include/libft.h"
 
 /*
@@ -96,6 +97,16 @@ typedef struct		s_mat
 	t_vector		rgt;
 }					t_mat;
 
+typedef struct		s_textunit
+{
+	int	has_texture;
+	int	*texture;
+	int	texture_width;
+	double	xscale;
+	double	yscale;
+}					t_textunit;
+
+
 typedef struct		s_calcunit
 {
 	double			a;
@@ -140,6 +151,7 @@ typedef struct		s_shape
 	double			brillance;
 	t_mat			rot;
 	t_mat			inv_rot;
+	t_textunit		textunit;
 	void			*shape;
 }					t_shape;
 
@@ -314,6 +326,17 @@ void				rotate_x(t_mat *src, double a);
 void				rotate_y(t_mat *src, double a);
 void				rotate_z(t_mat *src, double a);
 void				rotate_event(t_all *param, t_event touch);
+
+/*
+ ** Limiters
+*/
+
+void				limit_sphere(t_shape shape, t_ray ray,
+									double *t,t_calcunit calc);
+void				limit_cylinder(t_shape shape, t_ray ray,
+									double *t, t_calcunit calc);
+void				limit_cone(t_shape shape, t_ray ray,
+									double *t, t_calcunit calc);
 
 /*
  ** Texture

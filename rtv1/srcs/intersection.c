@@ -6,7 +6,7 @@
 /*   By: tmilon <tmilon@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 17:50:46 by tmilon            #+#    #+#             */
-/*   Updated: 2018/05/27 16:51:33 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/05/29 12:34:03 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,77 +31,6 @@ int	resolve_quadratic_equation(t_calcunit *calc, double *t)
 	return (calc->t0 == -1 && calc->t1 == -1 ? 0 : 1);
 }
 
-t_calcunit	limiter_setup(t_shape shape, t_ray ray, t_calcunit calc)
-{
-	calc.get_in.x = shape.origin.x + (calc.t0 * ray.direction.x);
-	calc.get_in.y = shape.origin.y + (calc.t0 * ray.direction.y);
-	calc.get_in.z = shape.origin.z + (calc.t0 * ray.direction.z);
-	calc.get_out.x = shape.origin.x + (calc.t1 * ray.direction.x);
-	calc.get_out.y = shape.origin.y + (calc.t1 * ray.direction.y);
-	calc.get_out.z = shape.origin.z + (calc.t1 * ray.direction.z);
-	return (calc);
-}
-
-void		limit_sphere(t_shape shape, t_calcunit calc, double *t)
-{
-	t_vector	bottom;
-	t_vector	top;
-
-	bottom = new_vector(-1, -1, -1);
-	top = new_vector(1, 1, 1);
-	bottom = vector_op(bottom, new_vector_unicoord(shape.radius), '*');
-	top = vector_op(top, new_vector_unicoord(shape.radius), '*');
-	if (calc.t0 != -1
-			&& calc.get_in.x >= bottom.x && calc.get_in.x < top.x
-			&& calc.get_in.y >= bottom.y && calc.get_in.y < top.y //&& get_in.y < shape.height
-			&& calc.get_in.z >= bottom.z && calc.get_in.z < top.z
-			)
-		*t = calc.t0;
-	else if (calc.t1 != -1
-			&& calc.get_out.x >= bottom.x && calc.get_out.x < top.x
-			&& calc.get_out.y >= bottom.y && calc.get_out.y < top.y //&& get_out.y < shape.height
-			&& calc.get_out.z >= bottom.z && calc.get_out.z < top.z
-			)
-		*t = calc.t1;
-}
-
-void		limit_cylinder(t_shape shape, t_calcunit calc, double *t)
-{
-	t_vector	bottom;
-	t_vector	top;
-
-	bottom = new_vector(-1, -1, -1);
-	top = new_vector(1, 1, 1);
-	bottom = vector_op(bottom, new_vector(shape.radius, shape.height, shape.radius), '*');
-	top = vector_op(top, new_vector(shape.radius, shape.height, shape.radius), '*');
-	if (calc.t0 != -1
-			&& calc.get_in.x >= bottom.x && calc.get_in.x < top.x
-			&& calc.get_in.y >= bottom.y && calc.get_in.y < top.y //&& get_in.y < shape.height
-			&& calc.get_in.z >= bottom.z && calc.get_in.z < top.z
-			)
-		*t = calc.t0;
-	else if (calc.t1 != -1
-			&& calc.get_out.x >= bottom.x && calc.get_out.x < top.x
-			&& calc.get_out.y >= bottom.y && calc.get_out.y < top.y //&& get_out.y < shape.height
-			&& calc.get_out.z >= bottom.z && calc.get_out.z < top.z
-			)
-		*t = calc.t1;
-}
-
-void	limit(t_shape shape, t_ray ray, double *t, t_calcunit calc)
-{
-	t_vector	bottom;
-	t_vector	top;
-
-	bottom = new_vector(-1, -1, -1);
-	top = new_vector(1, 1, 1);
-	calc = limiter_setup(shape, ray, calc);
-	if (shape.type == CYLINDER)
-		limit_cylinder(shape, calc, t);
-	else if (shape.type == SPHERE)
-		limit_sphere(shape, calc, t);
-}
-
 int	intersect_sphere(t_shape shape, t_ray ray, double *t)
 {
 	t_calcunit	calc;
@@ -112,7 +41,7 @@ int	intersect_sphere(t_shape shape, t_ray ray, double *t)
 	calc.b = 2 * dotprod(ray.direction, shape.origin);
 	calc.c = dotprod(shape.origin, shape.origin) - shape.radius * shape.radius;
 	if (resolve_quadratic_equation(&calc, t))
-		limit(shape, ray, t, calc);
+		limit_sphere(shape, ray, t, calc);
 	return (*t == calc.t0 || *t == calc.t1 ? 1 : 0);
 }
 
@@ -135,8 +64,9 @@ int	intersect_plane(t_shape shape, t_ray ray, double *t)
 		return (0);
 	width = shape.origin.x + (dist * ray.direction.x);
 	length = shape.origin.z + (dist * ray.direction.z);
-	if ((width >= 0) && (width < shape.width)
-			&& (length >= 0) && (length < shape.width))
+	if ((width >= -shape.width) && (width < shape.width)
+			&& (length >= -shape.width) && (length < shape.width)
+			&& width * width + length * length < 10000)
 		*t = dist;
 	return (*t == dist ? 1 : 0);
 }
@@ -156,9 +86,7 @@ int	intersect_cylinder(t_shape shape, t_ray ray, double *t)
 	calc.c = shape.origin.x * shape.origin.x +
 		shape.origin.z * shape.origin.z - shape.radius * shape.radius;
 	if (resolve_quadratic_equation(&calc, t))
-	{
-		limit(shape, ray, t, calc);
-	}
+		limit_cylinder(shape, ray, t, calc);
 	return (*t == calc.t0 || *t == calc.t1 ? 1 : 0);
 }
 
@@ -177,13 +105,6 @@ int	intersect_cone(t_shape shape, t_ray ray, double *t)
 	calc.c = (shape.origin.x * shape.origin.x + shape.origin.z
 	* shape.origin.z) + (-shape.radius * shape.origin.y * shape.origin.y);
 	if (resolve_quadratic_equation(&calc, t))
-	{
-		get_in = shape.origin.y + (calc.t0 * ray.direction.y);
-		get_out = shape.origin.y + (calc.t1 * ray.direction.y);
-		if (calc.t0 != -1 && get_in >= 0 && get_in < shape.height)
-			*t = calc.t0;
-		else if (calc.t1 != -1 && get_out >= 0 && get_out < shape.height)
-			*t = calc.t1;
-	}
+		limit_cone(shape, ray, t, calc);
 	return (*t == calc.t0 || *t == calc.t1 ? 1 : 0);
 }

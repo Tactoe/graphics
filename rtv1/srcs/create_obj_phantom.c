@@ -6,7 +6,7 @@
 /*   By: cpieri <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 11:11:20 by cpieri            #+#    #+#             */
-/*   Updated: 2018/06/05 19:48:50 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/05/28 15:43:40 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,60 +15,50 @@
 #include "rtv1.h"
 #include <stdio.h>
 
-int		*surf_to_int_array(SDL_Surface *surf, t_point p)
+int		*surf_to_int_array(SDL_Surface *surf)
 {
 	t_color	c;
 	Uint8	r;
 	Uint8	g;
 	Uint8	b;
-	Uint8	a;
+	t_point	p;
 	int		*tab;
-	SDL_Surface *rgbaImage;
 
-	rgbaImage = SDL_ConvertSurfaceFormat(surf, SDL_PIXELFORMAT_RGBA32, 0);
-	tab = ft_memalloc(sizeof(int) * (surf->h * surf->w));
-	uint32_t* pixels = (uint32_t *)(rgbaImage->pixels);
+	SDL_LockSurface(surf);
+	p = new_point(-1, -1, 0);
+	tab = NULL;
+	tab = ft_memalloc(sizeof(int) * (surf->h * surf->pitch));
 	while(++p.y < surf->h)
 	{
 		p.x = -1;
-		while (++p.x < surf->w)
+		while (++p.x < surf->pitch)
 		{
-			SDL_GetRGBA(pixels[p.x + p.y * rgbaImage->w], rgbaImage->format,
-					&r, &g, &b, &a);
+			uint32_t pixel = *( ( uint32_t * )surf->pixels + p.y * surf->w + p.x);
+			//SDL_GetRGB(pixel, surf->format, &r, &g, &b);
 			c.r = (int)r;
 			c.g = (int)g;
 			c.b = (int)b;
-			tab[p.y * surf->w + p.x] = color_to_int(c);
+			if (r != 0 || g != 0 || b != 0)
+				printf("adding r %d g %d b%d\n",r,g,b);
+			tab[p.y * surf->pitch + p.x] = color_to_int(c);
+			//printf("added %d as int\n", color_to_int(c));
 		}
 	}
+	SDL_UnlockSurface(surf);
 	return (tab);
 }
 
-void	setup_textunit(const char *surfpath, t_textunit *textunit, double xscale, double yscale)
-{
-	SDL_Surface	*surf;
-
-	surf = NULL;
-	surf = SDL_LoadBMP(surfpath);
-	textunit->has_texture = 1;
-	textunit->texture_width = surf->w;
-	textunit->xscale = xscale;
-	//NO LESS THAN 0.1
-	textunit->yscale = yscale;
-	SDL_LockSurface(surf);
-	textunit->texture = surf_to_int_array(surf, new_point(-1, -1, 0));
-	SDL_UnlockSurface(surf);
-	SDL_FreeSurface(surf);
-}
 void	cpy_plane(t_shape *s, char **tab)
 {
-	//char	*ok = "textures/stones.bmp";
 	char	*ok = "textures/lena_gray.bmp";
+	SDL_Surface	*surf;
 
 	if (ft_strcmp(ok, "") != 0)
-		setup_textunit(ok, &s->textunit, 1, 1);
-	else
-		s->textunit.has_texture = 0;
+	{
+		surf = SDL_LoadBMP(ok);
+		s->texture = surf_to_int_array(surf);
+		SDL_FreeSurface(surf);
+	}
 	s->origin = new_vector(ft_atof(tab[1]), ft_atof(tab[2]), ft_atof(tab[3]));
 	s->width = ft_atof(tab[9]);
 	s->rot = new_matrix(ft_atof(tab[5]), ft_atof(tab[6]), ft_atof(tab[7]));
@@ -82,13 +72,6 @@ void	cpy_plane(t_shape *s, char **tab)
 
 void	cpy_sphere(t_shape *s, char **tab)
 {
-	//char	*ok = "textures/stones.bmp";
-	char	*ok = "textures/lena_gray.bmp";
-
-	if (ft_strcmp(ok, "") != 0)
-		setup_textunit(ok, &s->textunit, 0.5, 0.5);
-	else
-		s->textunit.has_texture = 0;
 	s->origin = new_vector(ft_atof(tab[1]), ft_atof(tab[2]), ft_atof(tab[3]));
 	s->radius = ft_atof(tab[8]);
 	s->rot = new_matrix(ft_atof(tab[5]), ft_atof(tab[6]), ft_atof(tab[7]));
@@ -101,13 +84,6 @@ void	cpy_sphere(t_shape *s, char **tab)
 
 void	cpy_cylinder(t_shape *s, char **tab)
 {
-	//char	*ok = "textures/stones.bmp";
-	char	*ok = "textures/lena_gray.bmp";
-
-	if (ft_strcmp(ok, "") != 0)
-		setup_textunit(ok, &s->textunit, 1, 1);
-	else
-		s->textunit.has_texture = 0;
 	s->origin = new_vector(ft_atof(tab[1]), ft_atof(tab[2]), ft_atof(tab[3]));
 	s->radius = ft_atof(tab[8]);
 	s->height = ft_atof(tab[10]);
@@ -121,13 +97,6 @@ void	cpy_cylinder(t_shape *s, char **tab)
 
 void	cpy_cone(t_shape *s, char **tab)
 {
-	//char	*ok = "textures/stones.bmp";
-	char	*ok = "textures/lena_gray.bmp";
-
-	if (ft_strcmp(ok, "") != 0)
-		setup_textunit(ok, &s->textunit, 1, 1);
-	else
-		s->textunit.has_texture = 0;
 	s->origin = new_vector(ft_atof(tab[1]), ft_atof(tab[2]), ft_atof(tab[3]));
 	s->radius = ft_atof(tab[8]) * DEG2RAD;
 	s->height = ft_atof(tab[10]);

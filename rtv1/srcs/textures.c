@@ -1,12 +1,12 @@
 /* ************************************************************************** */
-/*                                                                            */
+/*                                                */
 /*                                                        :::      ::::::::   */
 /*   textures.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tmilon <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/27 14:06:23 by tmilon            #+#    #+#             */
-/*   Updated: 2018/05/27 14:49:46 by tmilon           ###   ########.fr       */
+/*   Updated: 2018/06/05 19:48:23 by tmilon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	coloralter(int color, double u, double v)
 		i++;
 	}
 	rainbow[i] = new_color(0, 255, 0);
-	color = color_to_int(rainbow[(int)(v * rainbowsize * 4) % rainbowsize]);
+	color = interpolate(color, color_to_int(rainbow[(int)(v * rainbowsize * 4) % rainbowsize]),0.9);
 	free(rainbow);
 	return (color);
 }
@@ -79,12 +79,85 @@ int	checker_pattern(int color, double u, double v)
 	
 }
 
+int	get_texture_color(double u, double v, t_shape s)
+{
+	double	modif;
+	double	tmpmodif;
+	double reduc;
+	double uback;
+	double vback;
+
+	vback = v;
+	uback = u;
+	modif = s.textunit.texture_width;
+	//printf("Modif is %f \n", modif);
+	if (s.type == PLANE)
+	{
+		u = u * modif / (s.width  * 2 * s.textunit.xscale);
+		v = v * modif / (s.width  * 2 * s.textunit.yscale);
+		u += modif;
+		v += modif;
+		//u += 100;
+		//v += 100;
+		//modif = modif / 2;
+		//u += tmpmodif;
+		//v += tmpmodif;
+		//u += s.width;
+		/*
+		if (s.textunit.xscale < 1)
+			u += modif ;
+		else
+			u = (u + modif) / 2;
+		if (s.textunit.yscale < 0.5)
+			reduc = -5 + s.textunit.yscale * 10;
+		else if (s.textunit.yscale < 1)
+			reduc = 0.5 - s.textunit.yscale;
+		else
+			reduc = 0.5 - s.textunit.yscale;
+		v += modif * 0.5;*/
+	}
+	else if (s.type == SPHERE)
+	{
+		u = u * modif / (s.textunit.xscale);
+		v = v * modif / (s.textunit.yscale);
+		//u = u * modif / (s.radius);
+		//v = v * modif / (s.radius);
+		//u += 100;
+		//v += 100;
+		//u += modif * 0.5;
+		//v += modif * 0.5;
+	}
+	else if (s.type == CYLINDER)
+	{
+		u = u * modif / (s.textunit.xscale);
+		v = v * modif / (s.textunit.yscale);
+		//u += modif * (s.radius);
+		//v += modif * ( s.height );
+	}
+	else if (s.type == CONE)
+	{
+		u = u * modif / (s.textunit.xscale);
+		v = v * modif / (s.textunit.yscale);
+		//u += modif * (s.radius);
+		//v += modif * ( s.height / 2);
+	}
+	u = (int)u % (int)modif;
+	v = (int)v % (int)modif;
+	//printf("u %f v %f got converted to u %f v %f\n",uback, vback,  ceil(u), ceil(v));
+	if ((int)u + (int)v * modif < modif * modif && (int)u >= 0 && (int)v >= 0 && (int)v < modif && (int)u < modif)
+	{
+		//if (uback >= 0.9)
+		return (s.textunit.texture[(int)u + (int)((int)v * modif)]);
+	}else
+		return(0);
+}
+
 void		get_uv_mapping_coord(double *u, double *v, t_intersect i, t_shape s)
 {
 	if (s.type == PLANE)
 	{
-		*u /= s.width;
-		*v /= s.width;
+		*u = i.point.x + s.width * (s.textunit.xscale);
+		*v = -i.point.z + s.width * (s.textunit.yscale);
 	}
 	if (s.type == SPHERE)
 	{
@@ -108,9 +181,9 @@ int			texture(int color, t_intersect i, t_shape s)
 	double u;
 	double v;
 
-	u = i.point.x;
-	v = i.point.z;
 	get_uv_mapping_coord(&u, &v, i, s);
+	if (s.textunit.has_texture)
+		color = get_texture_color(u, v, s);
 	//color = checker_pattern(color, u, v);
 	//color = coloralter(color, u, v);
 	return (color);
