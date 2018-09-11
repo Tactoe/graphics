@@ -1,0 +1,7 @@
+*.o
+obj
+*.a
+rt
+.DS*
+*.swp
+screenshots/

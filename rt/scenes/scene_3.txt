@@ -1,0 +1,285 @@
+# Scene informations
+title: "rt - scene 3"
+camera{
+	pos: {0, 0, -10}
+	rot: {0, 0, 0}
+}
+ambiant: 0.1
+#
+
+# Objects
+object{
+	type: "plane"
+	pos: {0, -7, 0}
+	rot: {0, 0, 0}
+	color: "FA9696"
+	width: 100
+	brillance: 0.7
+	texture{
+		path: "textures/metal_floor.jpg"
+		x_scale: 0.08
+		y_scale: 0.08
+	}
+}
+object{
+	type: "plane"
+	pos: {0, 0, 42}
+	rot: {90, 0, 0}
+	color: "6464646"
+	width: 100
+	brillance: 0.7
+	texture{
+		path: "textures/stones.bmp"
+		x_scale: 0.05
+		y_scale: 0.05
+	}
+}
+object{
+	type: "plane"
+	pos: {3, 7, 20}
+	rot: {0, -20, 0}
+	color: "FADCDC"
+	width: 20
+	height: 20
+	brillance: 0.7
+	texture{
+		path: "textures/floor.png"
+		rainbow: 0.5
+	}
+}
+
+object{
+	type: "cylinder"
+	pos: {-8, -12, 15}
+	rot: {0, 0, 0}
+	radius: 1
+	color: "ffffff"
+	height: 42
+	brillance: 1
+	texture{
+		path: "textures/stones.bmp"
+		y_scale: 0.1
+	}
+}
+object{
+	type: "cylinder"
+	pos: {-8, -12, 30}
+	ros: {0, 0, 0}
+	radius: 1
+	color: "FAC8C8"
+	height: 42
+	brillance: 0.5
+	texture{
+		rainbow: 1
+	}
+}
+object{
+	type: "cylinder"
+	pos: {8, -12, 15}
+	rot: {0, 0, 0}
+	radius: 1
+	color: "FAC8C8"
+	height: 42
+	brillance: 0.5
+	texture{
+		checker: 1
+		waves: 50
+	}
+}
+object{
+	type: "cylinder"
+	pos: {8, -12, 30}
+	rot: {0, 0, 0}
+	radius: 1
+	color: "FAC8C8"
+	height: 42
+	brillance: 0.5
+	texture{
+		rainbow: 0.9
+		checker: 0.3
+	}
+}
+
+object{
+	type: "sphere"
+	pos: {-8, -7, 15}
+	radius: 2
+	color: "FAC8C8"
+	brillance: 1
+	texture{
+		path: "textures/stones.bmp"
+	}
+}
+object{
+	type: "sphere"
+	pos: {-8, -7, 30}
+	radius: 2
+	color: "FAC8C8"
+	brillance: 1
+	texture{
+		rainbow: 1
+	}
+}
+object{
+	type: "sphere"
+	pos: {8, -7, 15}
+	radius: 2
+	color: "FAC8C8"
+	brillance: 1
+	texture{
+		path: "textures/metal_floor.jpg"
+	}
+}
+object{
+	type: "sphere"
+	pos: {8, -7, 30}
+	radius: 2
+	color: "FAC8C8"
+	brillance: 1
+	texture{
+		checker: 1
+	}
+}
+
+object{
+	type: "sphere"
+	pos: {-8, 7, 15}
+	radius: 2
+	color: "FAC8C8"
+	brillance: 1
+	texture{
+		path: "textures/stones.bmp"
+		y_offset: 2
+	}
+}
+object{
+	type: "sphere"
+	pos: {-8, 7, 30}
+	radius: 2
+	color: "FAC8C8"
+	brillance: 1
+}
+object{
+	type: "sphere"
+	pos: {8, 7, 15}
+	radius: 2
+	color: "FAC8C8"
+	brillance: 1
+	texture{
+		path: "textures/floor.png"
+	}
+}
+object{
+	type: "sphere"
+	pos: {8, 7, 30}
+	radius: 2
+	color: "FAC8C8"
+	brillance: 1
+}
+
+object{
+	type: "cone"
+	pos: {0, 10, 22}
+	rot: {180, 0, 0}
+	radius: 2
+	color: "0C7B7B"
+	height: 100
+	brillance: 0.6
+	opacity: 0.4
+}
+object{
+	type: "sphere"
+	pos: {-2, 4, 23}
+	radius: 1
+	color: "3232FF"
+}
+object{
+	type: "sphere"
+	pos: {1, 2, 24}
+	radius: 1
+	color: "3232FF"
+}
+object{
+	type: "sphere"
+	pos: {0, -1, 20}
+	rot: {15, 45 90}
+	radius: 1
+	color: "3232FF"
+	cut{
+		amount: {0, 0, 1}
+		real_pos: 1
+	}
+}
+
+#
+
+# Lights
+spot{
+	pos: {1, 1, 10}
+	color: "FFFFFF"
+	intensity: 0.2
+}
+spot{
+	pos: {-12, -5, 20}
+	color: "FFFF2A"
+}
+spot{
+	pos: {10, 2, 12}
+	color: "14B42A"
+}
+spot{
+	pos: {0, 10.5, 22}
+	color: "FFFF2A"
+}
+
+spot{
+	pos: {5, 12, 4}
+	color: "FF2B96"
+}
+#
+
+##END##
+
+camera{
+	pos: {x, y, z}
+	rot: {x, y, z}
+}
+
+ambiant: a [0 -> 1]
+
+object{
+	type: "sphere/plane/cylinder/cone"
+	color: "RRGGBB"
+	pos: {x, y, z}
+    rot: {x, y, z}
+	height: a [0+] if 0, infinite
+	width: a [0+] if 0, infinite
+	radius: a [0+]
+	brillance: a [0 -> 1]
+	opacity: a [0 -> 1]
+	texture{
+		path: "path"
+		x_scale: a
+		y_scale: a
+		x_offset: a
+		y_offset: a
+		rainbow: a [0 -> 1]
+		checker: a [0 -> 1]
+		waves: a []
+	}
+	cut{
+		amount: {x, y, z} [-1 -> 1]
+		radius: a [0+]
+		real_pos: a [0 / 1]
+	}
+}
+sphere -> pos, radius, color, brillance[, texture]
+plane -> pos, rot, color, brillance[, width, height]
+cylinder -> pos, rot, radius, color, height
+cone -> pos, rot, radius, color, height
+
+spot{
+	pos: {x, y, z}
+	color: "RRGGBB"
+	intensity: a [0 -> 10]
+}

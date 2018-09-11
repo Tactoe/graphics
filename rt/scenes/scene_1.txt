@@ -1,0 +1,120 @@
+# Scene informations
+title: "rt - scene 1"
+camera{
+	pos: {3, -1, -20}
+	rot: {0, 0, 0}
+}
+ambiant: 0
+#
+
+# Objects
+
+object{
+	type: "sphere"
+	pos:{8,0,0}
+	radius: 1
+	color: "FAFAFA"
+	brillance: 0.3
+}
+
+object{
+	type: "sphere"
+	pos: {-10, -7, 15}
+	radius: 2
+	color: "FF6402"
+	brillance: 1
+}
+
+object{
+	type: "sphere"
+	pos: {4, 2, 10}
+	radius: 1
+	color: "FF0000"
+	brillance: 0.3
+}
+object{
+	type:"sphere"
+	pos: {-3, 1, 5}
+	radius: 1
+	color: "19FF19"
+	brillance: 0.3
+}
+object{
+	type: "sphere"
+	pos: {-3, -5, 20}
+	color: "FFFF2A"
+	radius: 1
+	brillance: 0.3
+}
+object{
+	type: "plane"
+	pos: {0, 0, 42}
+	rot: {90, 0, 0}
+	color: "3737FF"
+}
+object{
+	type: "plane"
+	pos: {-13, 0, 20}
+	rot: {0, 0, 90}
+	color: "960AFA"
+}
+object{
+	type: "plane"
+	pos: {0, -7, 0}
+	rot: {0, 0, 0}
+	color: "E1E1E1"
+}
+object{
+	type: "cylinder"
+	pos: {-12, 6, 20}
+	rot: {0, 0, 0}
+	radius: 5
+	color: "19FFFF"
+	brillance: 0.1
+}
+object{
+	type: "cylinder"
+	pos: {3, 2, 23}
+	rot: {-60, 0, -40}
+	radius: 3
+	color: "ff9b64"
+	brillance: 0.3
+}
+object{
+	type: "cone"
+	pos: {-3, 5, 25}
+	rot: {-15, 120, -42}
+	radius: 5
+	color: "ffdf0f"
+-	color: "1996ff"
+}
+object{
+	type: "cone"
+	pos: {5, -2, 7}
+	rot: {12, 40, -14}
+	radius: 3
+	color: "19fa7d"
+	brillance: 0.7
+}
+#
+
+# Lights
+spot{
+	pos: {-7, 3, 25}
+	color: "14C819"
+}
+spot{
+	pos: {-3, 2, -12}
+	color: "FFFF9B"
+}
+spot{
+	pos: {0, 0, 8}
+	color: "FFFFFF"
+}
+spot{
+	pos:{5, -2, 2}
+	color: "0203C8"
+}
+#
+
+#END##
